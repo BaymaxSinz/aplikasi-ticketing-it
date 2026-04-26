@@ -26,9 +26,7 @@ class Tickets extends Migration
         
         $this->forge->addKey('id', true);
         
-        // Relasi (Foreign Keys)
         $this->forge->addForeignKey('category_id', 'categories', 'id', 'CASCADE', 'CASCADE');
-        // technician_id menggunakan SET NULL agar tiket tidak terhapus jika akun teknisi dihapus
         $this->forge->addForeignKey('technician_id', 'users', 'id', 'CASCADE', 'SET NULL'); 
         
         $this->forge->createTable('tickets');

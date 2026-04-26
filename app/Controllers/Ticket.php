@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\TicketModel;
 use App\Models\CategoryModel;
+use App\Models\UserModel;
 
 use App\Controllers\BaseController;
 use App\Database\Migrations\Categories;
@@ -115,17 +116,20 @@ class Ticket extends BaseController
         $builder->join('categories', 'categories.id = tickets.category_id');
         $builder->join('users', 'users.id = tickets.technician_id', 'left');
         $builder->where('tickets.id', $id);
-
+        
         $ticket = $builder->get()->getRowArray();
 
         if (!$ticket) {
             return redirect()->to('/tickets');
         }
 
-        $data = [
-            'ticket' => $ticket
-        ];
+        $userModel = new UserModel();
 
+        $data = [
+            'ticket'      => $ticket,
+            'technicians' => $userModel->findAll() // Mengirim data seluruh teknisi ke View
+        ];
+        
         return view('tickets/detail', $data);
     }
 
@@ -196,5 +200,27 @@ class Ticket extends BaseController
         
         fclose($file); 
         exit; 
+    }
+
+    public function assign()
+    {
+        // Proteksi: Hanya admin yang boleh melakukan ini
+        if (session()->get('role') != 'admin') {
+            return redirect()->to('/tickets');
+        }
+
+        $id = $this->request->getPost('ticket_id');
+        
+        // Menangkap semua data dari modal Super Override
+        $data = [
+            'technician_id'   => $this->request->getPost('technician_id'),
+            'status'          => $this->request->getPost('status'),
+            'resolution_note' => $this->request->getPost('resolution_note')
+        ];
+
+        $this->ticketModel->update($id, $data);
+
+        session()->setFlashdata('success', 'Super Override berhasil! Data penanganan tiket telah diperbarui.');
+        return redirect()->to('/tickets/detail/' . $id);
     }
 }

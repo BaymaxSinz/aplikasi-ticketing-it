@@ -4,6 +4,8 @@
 
 <?= $this->section('content') ?>
 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
 <style>
     /* Kustomisasi Tabel & UI Premium */
     .table-custom th {
@@ -11,7 +13,7 @@
         letter-spacing: 0.5px;
         text-transform: uppercase;
         color: #6c757d;
-        border-bottom: 2px solid #edf2f6;
+        border-bottom: 2px solid #edf2f6 !important;
         padding-bottom: 1rem;
         white-space: nowrap;
     }
@@ -37,7 +39,6 @@
         font-size: 0.75rem;
         letter-spacing: 0.3px;
     }
-    /* Avatar Kecil untuk Teknisi */
     .avatar-sm {
         width: 28px;
         height: 28px;
@@ -50,6 +51,42 @@
         font-weight: bold;
         font-size: 0.7rem;
     }
+    
+    /* Kustomisasi Khusus Elemen DataTables agar senada dengan Clean UI */
+    .dataTables_wrapper .row {
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .dataTables_filter input {
+        border-radius: 8px;
+        padding: 0.4rem 1rem;
+        border: 1px solid #ced4da;
+    }
+    .dataTables_filter input:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        outline: none;
+    }
+    .dataTables_length select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 0.3rem 2rem 0.3rem 1rem;
+    }
+    .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        border-radius: 6px;
+    }
+    .page-link {
+        border-radius: 6px;
+        margin: 0 2px;
+        color: #495057;
+        border: none;
+    }
+    .page-link:hover {
+        background-color: #f0f4ff;
+        color: #0d6efd;
+    }
 </style>
 
 <div class="row align-items-center mb-4">
@@ -57,7 +94,7 @@
         <h3 class="fw-bold mb-0 text-dark">
             <i class="bi bi-inbox text-primary me-2"></i> Daftar Tiket Masuk
         </h3>
-        <p class="text-muted small mt-1 mb-0">Pantau dan kelola semua laporan masalah IT di sini.</p>
+        <p class="text-muted small mt-1 mb-0">Pantau, cari, dan kelola semua laporan masalah IT di sini.</p>
     </div>
     <div class="col-md-6 text-md-end mt-3 mt-md-0">
         <a href="<?= base_url('tickets/export') ?>" class="btn btn-outline-success shadow-sm rounded-pill px-3 me-2 fw-semibold">
@@ -78,9 +115,9 @@
 <?php endif; ?>
 
 <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-    <div class="card-body p-0">
-        <div class="table-responsive px-4 pb-3">
-            <table class="table table-borderless table-hover align-middle table-custom mb-0 mt-3">
+    <div class="card-body p-4">
+        <div class="table-responsive pb-2">
+            <table id="ticketTable" class="table table-borderless table-hover align-middle table-custom mb-0 w-100">
                 <thead>
                     <tr>
                         <th width="5%">ID</th>
@@ -90,7 +127,7 @@
                         <th width="8%" class="text-center">Prioritas</th>
                         <th width="10%" class="text-center">Status</th>
                         <th width="15%">Ditangani Oleh</th>
-                        <th width="15%" class="text-center">Aksi</th>
+                        <th width="15%" class="text-center" data-orderable="false">Aksi</th>
                     </tr>
                 </thead>
 
@@ -102,7 +139,7 @@
                                     <span class="fw-bold text-primary bg-light p-1 rounded px-2">#<?= $t['id'] ?></span>
                                 </td>
 
-                                <td>
+                                <td data-order="<?= $t['created_at'] ?>">
                                     <div class="fw-bold text-dark" style="font-size: 0.9rem;"><?= date('d M Y', strtotime($t['created_at'])) ?></div>
                                     <div class="text-muted" style="font-size: 0.8rem;"><i class="bi bi-clock"></i> <?= date('H:i', strtotime($t['created_at'])) ?></div>
                                 </td>
@@ -169,21 +206,36 @@
                                 </td>
                             </tr>
                         <?php endforeach; ?>
-                    <?php else : ?>
-                        <tr>
-                            <td colspan="8">
-                                <div class="text-center py-5">
-                                    <i class="bi bi-check2-circle text-success" style="font-size: 3rem; opacity: 0.5;"></i>
-                                    <h6 class="mt-3 fw-bold text-muted">Hore! Tidak ada masalah IT.</h6>
-                                    <p class="text-muted small">Semua tiket telah terselesaikan atau belum ada laporan baru yang masuk.</p>
-                                </div>
-                            </td>
-                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#ticketTable').DataTable({
+            // Mengubah bahasa teks bawaan DataTables menjadi Bahasa Indonesia
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json',
+            },
+            // Mengatur urutan default: Kolom ke-2 (Waktu Lapor index 1), urutkan dari yang paling baru (descending)
+            order: [[1, 'desc']],
+            // Mematikan fitur Sorting/Pengurutan khusus untuk kolom Aksi (index 7) agar rapi
+            columnDefs: [
+                { orderable: false, targets: 7 }
+            ],
+            // Styling tambahan agar sesuai dengan UI yang kita bangun
+            drawCallback: function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-sm');
+            }
+        });
+    });
+</script>
 
 <?= $this->endSection() ?>

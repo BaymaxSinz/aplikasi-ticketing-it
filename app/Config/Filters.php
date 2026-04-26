@@ -113,7 +113,8 @@ class Filters extends BaseFilters
             'before' => [
                 'dashboard', 
                 'categories', 'categories/*', 
-                'tickets', 'tickets/*'
+                'tickets', 'tickets/*',
+                'users', 'users/*'
             ]
         ]
     ];

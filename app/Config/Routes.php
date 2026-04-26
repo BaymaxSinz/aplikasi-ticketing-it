@@ -30,5 +30,11 @@ $routes->post('tickets/update-status', 'Ticket::updateStatus');
 
 $routes->get('tickets/export', 'Ticket::export');
 
+$routes->get('users', 'User::index');
+$routes->post('users/save', 'User::save');
+$routes->get('users/delete/(:num)', 'User::delete/$1');
+
+$routes->post('tickets/assign', 'Ticket::assign');
+
 
 
