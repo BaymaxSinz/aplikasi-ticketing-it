@@ -24,17 +24,16 @@ Aplikasi manajemen log IT internal yang dirancang untuk mencatat, melacak, dan m
 
 ## 🚀 Langkah Pemasangan
 
-### 1. Persiapan Database
+**### 1. Persiapan Database**
 1. Buka **phpMyAdmin**.
 2. Buat database baru dengan nama `ticketing_it_db`.
 3. Impor file database `.sql` yang telah disediakan di dalam repository ini ke dalam database tersebut.
 
-### 2. Instalasi Dependency
+**### 2. Instalasi Dependency**
 Buka terminal atau CMD di folder proyek ini, lalu jalankan perintah:
-```bash
 composer install
 
-3. Konfigurasi Environment
+**### 3. Konfigurasi Environment**
 Cari file bernama env atau env-example di root folder.
 
 Ubah nama file tersebut menjadi .env.
@@ -53,7 +52,7 @@ database.default.username = root
 database.default.password = 
 database.default.DBDriver = MySQLi
 
-4. Menjalankan Aplikasi
+**### 4. Menjalankan Aplikasi**
 Buka terminal/CMD di folder proyek.
 
 Jalankan perintah server bawaan CodeIgniter:
@@ -69,5 +68,5 @@ Username: admin@gmail.com
 Password: 1
 (Silakan sesuaikan dengan data di database Anda)
 
-Kontak Dev 
-@BaymaxSinz
+**Kontak Dev 
+@BaymaxSinz**
