@@ -63,5 +63,9 @@ CI_ENVIRONMENT = development
 # URL Aplikasi
 app.baseURL = 'http://localhost:8080/'
 
+## 📝 Lisensi
+* **Boleh**: Digunakan untuk keperluan pribadi atau internal kantor, dipelajari, dan dimodifikasi.
+* **Tidak Boleh**: Dijual kembali atau digunakan untuk tujuan komersial demi keuntungan pribadi tanpa izin dari pemilik kode.
+
 **Kontak Dev 
 @BaymaxSinz**
