@@ -18,4 +18,5 @@ Aplikasi Ticketing Internal berbasis Web untuk manajemen keluhan teknis IT. Diba
 
 1. **Clone Repository**
    ```bash
+   https://github.com/BaymaxSinz/aplikasi-ticketing-it.git
    
