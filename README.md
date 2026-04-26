@@ -2,6 +2,31 @@
 
 Aplikasi manajemen log IT internal yang dirancang untuk mencatat, melacak, dan mengelola keluhan teknis dari staf atau karyawan secara terstruktur. Dibangun menggunakan framework **CodeIgniter 4** dan **Bootstrap 5**.
 
+## 📸 Tampilan Aplikasi
+
+<table style="width: 100%;">
+  <tr>
+    <td width="50%">
+      <p align="center"><b>Dashboard Utama</b></p>
+      <img src="image/Dashboard.png" alt="Dashboard" width="100%">
+    </td>
+    <td width="50%">
+      <p align="center"><b>Daftar Tiket</b></p>
+      <img src="image/Daftar.png" alt="Daftar Tiket" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <p align="center"><b>Detail Catatan</b></p>
+      <img src="image/Catatan.png" alt="Catatan" width="100%">
+    </td>
+    <td width="50%">
+      <p align="center"><b>Manajemen User</b></p>
+      <img src="image/User.png" alt="User" width="100%">
+    </td>
+  </tr>
+</table>
+
 ---
 
 ## 📋 Fitur Utama
