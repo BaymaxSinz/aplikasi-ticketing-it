@@ -1,22 +1,28 @@
-# IT Log & Ticketing System
+# 🛠️ IT Log & Ticketing System
 
-Aplikasi Ticketing Internal berbasis Web untuk manajemen keluhan teknis IT. Dibangun dengan **CodeIgniter 4** dan **Bootstrap 5**.
+Aplikasi manajemen log IT internal untuk mencatat dan melacak keluhan teknis staf/karyawan. Dibangun menggunakan framework **CodeIgniter 4** untuk performa yang cepat dan terstruktur.
 
-## ✨ Fitur Utama
-* **Dashboard Analitik**: Pantau status tiket (Open, Pending, Closed) secara visual.
-* **Manajemen Tiket**: Pencatatan pelapor, kategori masalah, dan prioritas.
-* **Penugasan Teknisi**: Distribusi tugas antar staf IT.
-* **Export Report**: Cetak atau ekspor data untuk laporan bulanan.
+## 📋 Fitur
+- **Pencatatan Tiket**: Log laporan dari telepon atau tatap muka.
+- **Manajemen Status**: Lacak progres tiket (Open, In Progress, Closed).
+- **Skala Prioritas**: Pengaturan tingkat urgensi keluhan (Low, Medium, High).
+- **Dashboard Statistik**: Ringkasan jumlah tiket yang masuk.
 
-## 🛠️ Teknologi yang Digunakan
-* PHP 7.4+ atau 8.x
-* Framework CodeIgniter 4
-* MySQL / MariaDB
-* Bootstrap 5 (Frontend)
+## 💻 Prasyarat Sistem
+- **PHP**: Versi 7.4 atau 8.x
+- **Web Server**: Apache (via XAMPP/Laragon)
+- **Database**: MySQL / MariaDB
+- **Ekstensi PHP**: `intl`, `mbstring`, `mysqli` (harus aktif di php.ini)
 
-## 🚀 Cara Instalasi
+## 🚀 Langkah Pemasangan
 
-1. **Clone Repository**
-   ```bash
-   https://github.com/BaymaxSinz/aplikasi-ticketing-it.git
-   
+### 1. Persiapan Database
+1. Buka **phpMyAdmin**.
+2. Buat database baru, misalnya dengan nama `ticketing_it_db`.
+3. Impor file database yang disediakan:
+   - Lokasi file: sudah tersedia di repo
+
+### 2. Konfigurasi Environment
+1. Di folder utama aplikasi, cari file bernama `env example`.
+2. Ubah/Rename file tersebut menjadi `.env`.
+3. Buka file `.env` menggunakan notepad atau VS Code, lalu sesuaikan konfigurasi anda
