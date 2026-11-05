@@ -11,7 +11,7 @@ $routes->post('login/process', 'Auth::process');
 $routes->get('logout', 'Auth::logout');
 
 
-$routes->get('dashboard', 'dashboard::index');
+$routes->get('dashboard', 'Dashboard::index');
 
 $routes->get('categories', 'Category::index');
 $routes->post('categories/save', 'Category::save');
