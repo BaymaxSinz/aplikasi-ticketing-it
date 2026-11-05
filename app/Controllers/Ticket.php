@@ -19,14 +19,26 @@ class Ticket extends BaseController
 
     public function index()
     {
+        // Menangkap parameter 'type' dari URL (contoh: ?type=simrs)
+        $type = $this->request->getGet('type'); 
+
         $builder = $this->ticketModel->builder();
         $builder->select('tickets.*, categories.name as category_name, users.name as technician_name');
         $builder->join('categories', 'categories.id = tickets.category_id');
         $builder->join('users', 'users.id = tickets.technician_id', 'left');
+        
+        // Logika Filter Tipe Tiket
+        if ($type == 'simrs') {
+            $builder->where('tickets.ticket_type', 'simrs');
+        } elseif ($type == 'general') {
+            $builder->where('tickets.ticket_type', 'general');
+        }
+
         $builder->orderBy('tickets.created_at', 'DESC');
         
         $data = [
-            'tickets' => $builder->get()->getResultArray()
+            'tickets'     => $builder->get()->getResultArray(),
+            'active_type' => $type // Mengirim status filter ke View agar tombol tab menyala
         ];
         
         return view('tickets/index', $data);
@@ -165,15 +177,31 @@ class Ticket extends BaseController
 
     public function export()
     {
+        // Menangkap parameter 'type' agar Excel yang didownload sesuai filter
+        $type = $this->request->getGet('type');
+
         $builder = $this->ticketModel->builder();
         $builder->select('tickets.*, categories.name as category_name, users.name as technician_name');
         $builder->join('categories', 'categories.id = tickets.category_id');
         $builder->join('users', 'users.id = tickets.technician_id', 'left');
+        
+        // Logika Filter Tipe Tiket
+        if ($type == 'simrs') {
+            $builder->where('tickets.ticket_type', 'simrs');
+        } elseif ($type == 'general') {
+            $builder->where('tickets.ticket_type', 'general');
+        }
+        
         $builder->orderBy('tickets.created_at', 'DESC');
         
         $tickets = $builder->get()->getResultArray();
 
-        $filename = 'Laporan_Semua_Tiket_IT_' . date('Y-m-d') . '.csv';
+        // Mengubah nama file Excel secara dinamis berdasarkan filter
+        $filterName = 'Semua_Tiket';
+        if ($type == 'simrs') $filterName = 'Tiket_SIMRS';
+        if ($type == 'general') $filterName = 'Tiket_IT_Umum';
+
+        $filename = 'Laporan_' . $filterName . '_' . date('Y-m-d') . '.csv';
         header("Content-Description: File Transfer");
         header("Content-Disposition: attachment; filename=$filename");
         header("Content-Type: application/csv; "); 

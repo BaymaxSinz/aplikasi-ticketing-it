@@ -23,15 +23,17 @@
     .page-link:hover { background-color: #f0f4ff; color: #0d6efd; }
 </style>
 
-<div class="row align-items-center mb-4">
-    <div class="col-md-6">
+<!-- Header Halaman & Tombol Aksi -->
+<div class="row align-items-center mb-3">
+    <div class="col-md-5">
         <h3 class="fw-bold mb-0 text-dark">
             <i class="bi bi-inbox text-primary me-2"></i> Daftar Tiket Masuk
         </h3>
         <p class="text-muted small mt-1 mb-0">Pantau, cari, dan kelola semua laporan masalah IT di sini.</p>
     </div>
-    <div class="col-md-6 text-md-end mt-3 mt-md-0">
-        <a href="<?= base_url('tickets/export') ?>" class="btn btn-outline-success shadow-sm rounded-pill px-3 me-2 fw-semibold">
+    <div class="col-md-7 text-md-end mt-3 mt-md-0">
+        <!-- Tombol Export sekarang membawa filter aktif -->
+        <a href="<?= base_url('tickets/export' . (!empty($active_type) ? '?type='.$active_type : '')) ?>" class="btn btn-outline-success shadow-sm rounded-pill px-3 me-2 fw-semibold">
             <i class="bi bi-file-earmark-excel me-1"></i> Export Laporan
         </a>
         <a href="<?= base_url('tickets/create') ?>" class="btn btn-primary shadow-sm rounded-pill px-4 fw-semibold">
@@ -40,6 +42,20 @@
     </div>
 </div>
 
+<!-- Filter Tipe Tiket (Pill Tabs) -->
+<div class="d-flex mb-4 gap-2">
+    <a href="<?= base_url('tickets') ?>" class="btn btn-sm <?= empty($active_type) ? 'btn-dark' : 'btn-outline-secondary bg-white text-muted' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
+        Semua Data
+    </a>
+    <a href="<?= base_url('tickets?type=simrs') ?>" class="btn btn-sm <?= ($active_type == 'simrs') ? 'btn-danger' : 'btn-outline-danger bg-white text-danger' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
+        <i class="bi bi-hospital"></i> Khusus SIMRS
+    </a>
+    <a href="<?= base_url('tickets?type=general') ?>" class="btn btn-sm <?= ($active_type == 'general') ? 'btn-primary' : 'btn-outline-primary bg-white text-primary' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
+        <i class="bi bi-pc-display"></i> Khusus IT Umum
+    </a>
+</div>
+
+<!-- Notifikasi Sukses -->
 <?php if (session()->getFlashdata('success')) : ?>
     <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 d-flex align-items-center" role="alert">
         <i class="bi bi-check-circle-fill fs-5 me-3"></i>
@@ -165,8 +181,8 @@
     $(document).ready(function() {
         $('#ticketTable').DataTable({
             language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json' },
-            order: [[1, 'desc']],
-            columnDefs: [{ orderable: false, targets: 7 }],
+            order: [[1, 'desc']], // Urutkan berdasarkan kolom ke-2 (index 1) yaitu Waktu Lapor
+            columnDefs: [{ orderable: false, targets: 7 }], // Matikan fitur panah urut di kolom Aksi
             drawCallback: function () {
                 $('.dataTables_paginate > .pagination').addClass('pagination-sm');
             }
