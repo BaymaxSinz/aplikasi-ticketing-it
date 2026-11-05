@@ -5,7 +5,6 @@
 <?= $this->section('content') ?>
 
 <style>
-    /* Kustomisasi Card & UI Premium */
     .card-detail { border: none; border-radius: 15px; }
     .card-header-custom { background-color: transparent; border-bottom: 1px solid #edf2f6; padding: 1.5rem 1.5rem 1rem; font-weight: 700; color: #2c3e50; }
     .meta-box { background-color: #f8f9fa; border: 1px solid #edf2f6; border-radius: 10px; padding: 1rem; height: 100%; }
@@ -40,6 +39,7 @@
 <?php endif; ?>
 
 <div class="row">
+    <!-- Panel Kiri: Informasi Tiket -->
     <div class="col-lg-8 mb-4">
         <div class="card shadow-sm card-detail h-100">
             <div class="card-body p-4 p-md-5">
@@ -65,8 +65,18 @@
                     </div>
                     <div class="col-md-4">
                         <div class="meta-box">
-                            <div class="meta-label"><i class="bi bi-tags me-1"></i> Kategori</div>
+                            <div class="meta-label"><i class="bi bi-tags me-1"></i> Kategori & Tipe</div>
                             <div class="meta-value text-primary"><?= esc($ticket['category_name']) ?></div>
+                            
+                            <!-- BADGE TIPE TIKET -->
+                            <div class="mt-1">
+                                <?php if($ticket['ticket_type'] == 'simrs'): ?>
+                                    <span class="badge bg-danger text-white rounded-pill px-2" style="font-size: 0.7rem;">SIMRS</span>
+                                <?php else: ?>
+                                    <span class="badge bg-primary text-white rounded-pill px-2" style="font-size: 0.7rem;">IT UMUM</span>
+                                <?php endif; ?>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -84,6 +94,7 @@
         </div>
     </div>
 
+    <!-- Panel Kanan: Aksi & Status -->
     <div class="col-lg-4 mb-4">
         <div class="card shadow-sm card-detail h-100">
             <div class="card-header card-header-custom">
@@ -154,7 +165,7 @@
 
                         <div class="mb-4">
                             <label class="form-label form-label-custom">CATATAN PENYELESAIAN</label>
-                            <textarea class="form-control shadow-sm" name="resolution_note" rows="4" placeholder="Tuliskan solusi yang dilakukan agar dapat menjadi dokumentasi..." <?= ($ticket['status'] == 'closed') ? 'readonly' : '' ?>><?= esc($ticket['resolution_note']) ?></textarea>
+                            <textarea class="form-control shadow-sm" name="resolution_note" rows="4" placeholder="Tuliskan solusi yang dilakukan..." <?= ($ticket['status'] == 'closed') ? 'readonly' : '' ?>><?= esc($ticket['resolution_note']) ?></textarea>
                         </div>
 
                         <div class="d-grid">
@@ -183,6 +194,7 @@
     </div>
 </div>
 
+<!-- Modal Super Override (Khusus Admin) -->
 <?php if(session()->get('role') == 'admin'): ?>
 <div class="modal fade" id="assignModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -230,7 +242,7 @@
                 
                 <div class="modal-footer border-0 pb-4 px-4">
                     <button type="button" class="btn btn-light fw-semibold" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary fw-semibold px-4">Terapkan</button>
+                    <button type="submit" class="btn btn-primary fw-semibold px-4">Terapkan Override</button>
                 </div>
             </form>
             

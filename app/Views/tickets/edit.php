@@ -5,49 +5,18 @@
 <?= $this->section('content') ?>
 
 <style>
-    /* Kustomisasi Form Premium (Sama dengan form Create) */
-    .card-form {
-        border: none;
-        border-radius: 15px;
-    }
-    .form-section-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #2c3e50;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-    }
-    .form-section-title i {
-        background-color: #fff9e6; /* Latar kuning muda untuk edit */
-        color: #ffc107; /* Warna kuning warning */
-        padding: 0.5rem;
-        border-radius: 8px;
-        margin-right: 0.8rem;
-    }
-    .form-label-custom {
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        color: #6c757d;
-    }
-    .form-control, .form-select {
-        border-radius: 8px;
-        padding: 0.7rem 1rem;
-        border: 1px solid #ced4da;
-        background-color: #fcfcfc;
-        transition: all 0.2s;
-    }
-    .form-control:focus, .form-select:focus {
-        background-color: #ffffff;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
-        border-color: #86b7fe;
-    }
-    hr.custom-divider {
-        border-color: #edf2f6;
-        margin: 2.5rem 0;
-    }
+    .card-form { border: none; border-radius: 15px; }
+    .form-section-title { font-size: 1.1rem; font-weight: 700; color: #2c3e50; margin-bottom: 1.5rem; display: flex; align-items: center; }
+    .form-section-title i { background-color: #fff9e6; color: #ffc107; padding: 0.5rem; border-radius: 8px; margin-right: 0.8rem; }
+    .form-label-custom { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #6c757d; }
+    .form-control, .form-select { border-radius: 8px; padding: 0.7rem 1rem; border: 1px solid #ced4da; background-color: #fcfcfc; transition: all 0.2s; }
+    .form-control:focus, .form-select:focus { background-color: #ffffff; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1); border-color: #86b7fe; }
+    hr.custom-divider { border-color: #edf2f6; margin: 2.5rem 0; }
+    
+    .type-select-card { border: 2px solid #edf2f6; border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s; background-color: #fcfcfc; }
+    .type-select-card:hover { border-color: #86b7fe; }
+    .btn-check:checked + .type-select-card-general { border-color: #0d6efd; background-color: #f0f4ff; }
+    .btn-check:checked + .type-select-card-simrs { border-color: #dc3545; background-color: #fff5f5; }
 </style>
 
 <div class="row align-items-center mb-4">
@@ -69,6 +38,42 @@
         <form action="<?= base_url('tickets/update') ?>" method="post">
             <input type="hidden" name="id" value="<?= $ticket['id'] ?>">
             
+            <!-- Pilihan Tipe Tiket -->
+            <div class="form-section-title">
+                <i class="bi bi-layers"></i> Tipe Layanan / Sistem
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <input type="radio" class="btn-check" name="ticket_type" id="typeGeneral" value="general" <?= ($ticket['ticket_type'] == 'general') ? 'checked' : '' ?>>
+                    <label class="type-select-card type-select-card-general d-flex align-items-center w-100" for="typeGeneral">
+                        <div class="bg-primary text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                            <i class="bi bi-pc-display fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark">IT Umum</div>
+                            <div class="text-muted small">Hardware, Jaringan, Printer, OS, PC Layanan</div>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="col-md-6">
+                    <input type="radio" class="btn-check" name="ticket_type" id="typeSimrs" value="simrs" <?= ($ticket['ticket_type'] == 'simrs') ? 'checked' : '' ?>>
+                    <label class="type-select-card type-select-card-simrs d-flex align-items-center w-100" for="typeSimrs">
+                        <div class="bg-danger text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                            <i class="bi bi-hospital fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark">SIMRS</div>
+                            <div class="text-muted small">Bridging BPJS, Error Poliklinik, Database, Web RS</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <hr class="custom-divider">
+
+            <!-- SEGMEN 1: Informasi Pelapor -->
             <div class="form-section-title">
                 <i class="bi bi-person-badge"></i> Informasi Pelapor
             </div>
@@ -79,13 +84,14 @@
                     <input type="text" class="form-control" name="reporter_name" value="<?= esc($ticket['reporter_name']) ?>" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label form-label-custom">DEPARTEMEN / DIVISI</label>
+                    <label class="form-label form-label-custom">DEPARTEMEN / RUANGAN / POLI</label>
                     <input type="text" class="form-control" name="reporter_department" value="<?= esc($ticket['reporter_department']) ?>" required>
                 </div>
             </div>
 
             <hr class="custom-divider">
 
+            <!-- SEGMEN 2: Detail Masalah -->
             <div class="form-section-title">
                 <i class="bi bi-tools"></i> Detail Masalah
             </div>
@@ -102,9 +108,9 @@
                 <div class="col-md-6">
                     <label class="form-label form-label-custom">TINGKAT PRIORITAS</label>
                     <select class="form-select" name="priority" required>
-                        <option value="low" <?= ($ticket['priority'] == 'low') ? 'selected' : '' ?>>Rendah (Low) - Tidak Mengganggu Kerja</option>
-                        <option value="medium" <?= ($ticket['priority'] == 'medium') ? 'selected' : '' ?>>Sedang (Medium) - Cukup Mengganggu</option>
-                        <option value="high" <?= ($ticket['priority'] == 'high') ? 'selected' : '' ?>>Tinggi (High) - Sistem Mati / Urgent</option>
+                        <option value="low" <?= ($ticket['priority'] == 'low') ? 'selected' : '' ?>>Rendah (Low)</option>
+                        <option value="medium" <?= ($ticket['priority'] == 'medium') ? 'selected' : '' ?>>Sedang (Medium)</option>
+                        <option value="high" <?= ($ticket['priority'] == 'high') ? 'selected' : '' ?>>Tinggi (High)</option>
                     </select>
                 </div>
             </div>

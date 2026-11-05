@@ -16,6 +16,7 @@ class TicketModel extends Model
         'reporter_name', 
         'reporter_department', 
         'category_id', 
+        'ticket_type', 
         'technician_id', 
         'title', 
         'description', 
