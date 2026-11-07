@@ -42,7 +42,7 @@ class Dashboard extends BaseController
         // Kirim semua data ke View
         $data = [
             'total_semua'     => $total_semua,
-            'tiket_open'      => $ticket_open,
+            'tiket_open'      => $tiket_open,
             'in_progress'     => $in_progress,
             'selesai'         => $selesai,
             'latest_tickets'  => $latest_tickets,
