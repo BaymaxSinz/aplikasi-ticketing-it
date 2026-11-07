@@ -9,7 +9,7 @@ class Dashboard extends BaseController
     public function index()
     {
         $ticketModel = new TicketModel();
-        $db = \Config\Database::connect(); // Koneksi ke database murni untuk query kompleks
+        $db = \Config\Database::connect(); 
 
         // 1. METRIK ANGKA ATAS
         $tiket_open  = $ticketModel->where('status', 'open')->countAllResults();
@@ -17,13 +17,18 @@ class Dashboard extends BaseController
         $selesai     = $ticketModel->whereIn('status', ['resolved', 'closed'])->countAllResults();
         $total_semua = $tiket_open + $in_progress + $selesai;
 
-        // 2. 5 TIKET TERBARU (QUICK ACCESS)
+        // 2. 5 TIKET OPEN TERBARU (QUICK ACCESS)
         $builder = $ticketModel->builder();
         $builder->select('tickets.*, categories.name as category_name, users.name as technician_name');
         $builder->join('categories', 'categories.id = tickets.category_id');
         $builder->join('users', 'users.id = tickets.technician_id', 'left');
+        
+        // --- BARIS FILTER BARU ---
+        $builder->where('tickets.status', 'open'); 
+        // -------------------------
+
         $builder->orderBy('tickets.created_at', 'DESC');
-        $builder->limit(5); // Ambil 5 teratas saja
+        $builder->limit(5); 
         $latest_tickets = $builder->get()->getResultArray();
 
         // 3. DATA GRAFIK DONUT (SIMRS vs UMUM)
@@ -42,7 +47,7 @@ class Dashboard extends BaseController
         // Kirim semua data ke View
         $data = [
             'total_semua'     => $total_semua,
-            'tiket_open'      => $tiket_open,
+            'tiket_open'      => $tiket_open, 
             'in_progress'     => $in_progress,
             'selesai'         => $selesai,
             'latest_tickets'  => $latest_tickets,
