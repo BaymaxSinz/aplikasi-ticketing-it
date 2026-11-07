@@ -21,6 +21,23 @@
     .page-item.active .page-link { background-color: #0d6efd; border-color: #0d6efd; border-radius: 6px; }
     .page-link { border-radius: 6px; margin: 0 2px; color: #495057; border: none; }
     .page-link:hover { background-color: #f0f4ff; color: #0d6efd; }
+    
+    /* Tambahan Style untuk Dropdown Filter Custom */
+    .custom-status-filter {
+        border-radius: 8px;
+        padding: 0.4rem 2rem 0.4rem 1rem;
+        border: 1px solid #ced4da;
+        background-color: #ffffff;
+        font-weight: 600;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .custom-status-filter:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        outline: none;
+    }
 </style>
 
 <!-- Header Halaman & Tombol Aksi -->
@@ -32,7 +49,7 @@
         <p class="text-muted small mt-1 mb-0">Pantau, cari, dan kelola semua laporan masalah IT di sini.</p>
     </div>
     <div class="col-md-7 text-md-end mt-3 mt-md-0">
-        <!-- Tombol Export sekarang membawa filter aktif -->
+        <!-- Tombol Export membawa filter aktif -->
         <a href="<?= base_url('tickets/export' . (!empty($active_type) ? '?type='.$active_type : '')) ?>" class="btn btn-outline-success shadow-sm rounded-pill px-3 me-2 fw-semibold">
             <i class="bi bi-file-earmark-excel me-1"></i> Export Laporan
         </a>
@@ -42,17 +59,34 @@
     </div>
 </div>
 
-<!-- Filter Tipe Tiket (Pill Tabs) -->
-<div class="d-flex mb-4 gap-2">
-    <a href="<?= base_url('tickets') ?>" class="btn btn-sm <?= empty($active_type) ? 'btn-dark' : 'btn-outline-secondary bg-white text-muted' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
-        Semua Data
-    </a>
-    <a href="<?= base_url('tickets?type=simrs') ?>" class="btn btn-sm <?= ($active_type == 'simrs') ? 'btn-danger' : 'btn-outline-danger bg-white text-danger' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
-        <i class="bi bi-hospital"></i> Khusus SIMRS
-    </a>
-    <a href="<?= base_url('tickets?type=general') ?>" class="btn btn-sm <?= ($active_type == 'general') ? 'btn-primary' : 'btn-outline-primary bg-white text-primary' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
-        <i class="bi bi-pc-display"></i> Khusus IT Umum
-    </a>
+<!-- BARIS FILTER: Tab Kategori (Kiri) & Dropdown Status (Kanan) -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    
+    <!-- Filter Tipe (Pill Tabs) -->
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="<?= base_url('tickets') ?>" class="btn btn-sm <?= empty($active_type) ? 'btn-dark' : 'btn-outline-secondary bg-white text-muted' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
+            Semua Data
+        </a>
+        <a href="<?= base_url('tickets?type=simrs') ?>" class="btn btn-sm <?= ($active_type == 'simrs') ? 'btn-danger' : 'btn-outline-danger bg-white text-danger' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
+            <i class="bi bi-hospital"></i> Khusus SIMRS
+        </a>
+        <a href="<?= base_url('tickets?type=general') ?>" class="btn btn-sm <?= ($active_type == 'general') ? 'btn-primary' : 'btn-outline-primary bg-white text-primary' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
+            <i class="bi bi-pc-display"></i> Khusus IT Umum
+        </a>
+    </div>
+
+    <!-- Filter Status (Live DataTables Dropdown) -->
+    <div class="d-flex align-items-center">
+        <label class="me-2 small text-muted fw-bold text-nowrap"><i class="bi bi-funnel"></i> TAMPILKAN:</label>
+        <select id="statusFilter" class="form-select form-select-sm custom-status-filter shadow-sm">
+            <option value="">Semua Status</option>
+            <option value="Open">Belum Dikerjakan (Open)</option>
+            <option value="In Progress">Sedang Dikerjakan (In Progress)</option>
+            <option value="Resolved">Menunggu Penutupan (Resolved)</option>
+            <option value="Closed">Sudah Selesai (Closed)</option>
+        </select>
+    </div>
+
 </div>
 
 <!-- Notifikasi Sukses -->
@@ -179,13 +213,21 @@
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#ticketTable').DataTable({
+        // Inisialisasi DataTables dan simpan ke dalam variabel 'table'
+        var table = $('#ticketTable').DataTable({
             language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json' },
-            order: [[1, 'desc']], // Urutkan berdasarkan kolom ke-2 (index 1) yaitu Waktu Lapor
-            columnDefs: [{ orderable: false, targets: 7 }], // Matikan fitur panah urut di kolom Aksi
+            order: [[1, 'desc']], 
+            columnDefs: [{ orderable: false, targets: 7 }], 
             drawCallback: function () {
                 $('.dataTables_paginate > .pagination').addClass('pagination-sm');
             }
+        });
+
+        // Script khusus untuk Live Filter Status
+        $('#statusFilter').on('change', function() {
+            // Kolom Status berada di index ke-5 (dihitung dari 0: ID=0, Waktu=1, Pelapor=2, Judul=3, Prioritas=4, Status=5)
+            // search() akan memfilter kata kunci, lalu draw() akan merender ulang tabel secara live
+            table.column(5).search(this.value).draw();
         });
     });
 </script>
