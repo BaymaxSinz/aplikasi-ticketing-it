@@ -8,7 +8,9 @@
 
 <style>
     .table-custom th { font-size: 0.8rem; letter-spacing: 0.5px; text-transform: uppercase; color: #6c757d; border-bottom: 2px solid #edf2f6 !important; padding-bottom: 1rem; white-space: nowrap; }
-    .table-custom td { padding: 1rem 0.75rem; border-bottom: 1px solid #edf2f6; color: #495057; vertical-align: middle; }
+    /* Memastikan td memiliki vertical-align top agar saat judul panjang, teks kolom lain tetap sejajar rapi di atas */
+    .table-custom td { padding: 1rem 0.75rem; border-bottom: 1px solid #edf2f6; color: #495057; vertical-align: top; }
+    
     .btn-action { border-radius: 8px; padding: 0.4rem 0.6rem; transition: all 0.2s; border: none; }
     .btn-action:hover { transform: translateY(-2px); }
     .badge-custom { padding: 0.4rem 0.8rem; border-radius: 50px; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.3px; }
@@ -22,7 +24,6 @@
     .page-link { border-radius: 6px; margin: 0 2px; color: #495057; border: none; }
     .page-link:hover { background-color: #f0f4ff; color: #0d6efd; }
     
-    /* Tambahan Style untuk Dropdown Filter Custom */
     .custom-status-filter {
         border-radius: 8px;
         padding: 0.4rem 2rem 0.4rem 1rem;
@@ -33,11 +34,7 @@
         cursor: pointer;
         transition: all 0.2s;
     }
-    .custom-status-filter:focus {
-        border-color: #86b7fe;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
-        outline: none;
-    }
+    .custom-status-filter:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1); outline: none; }
 </style>
 
 <!-- Header Halaman & Tombol Aksi -->
@@ -49,7 +46,6 @@
         <p class="text-muted small mt-1 mb-0">Pantau, cari, dan kelola semua laporan masalah IT di sini.</p>
     </div>
     <div class="col-md-7 text-md-end mt-3 mt-md-0">
-        <!-- Tombol Export membawa filter aktif -->
         <a href="<?= base_url('tickets/export' . (!empty($active_type) ? '?type='.$active_type : '')) ?>" class="btn btn-outline-success shadow-sm rounded-pill px-3 me-2 fw-semibold">
             <i class="bi bi-file-earmark-excel me-1"></i> Export Laporan
         </a>
@@ -61,8 +57,6 @@
 
 <!-- BARIS FILTER: Tab Kategori (Kiri) & Dropdown Status (Kanan) -->
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-    
-    <!-- Filter Tipe (Pill Tabs) -->
     <div class="d-flex gap-2 flex-wrap">
         <a href="<?= base_url('tickets') ?>" class="btn btn-sm <?= empty($active_type) ? 'btn-dark' : 'btn-outline-secondary bg-white text-muted' ?> rounded-pill px-4 py-2 shadow-sm fw-semibold" style="transition: all 0.2s;">
             Semua Data
@@ -74,8 +68,6 @@
             <i class="bi bi-pc-display"></i> Khusus IT Umum
         </a>
     </div>
-
-    <!-- Filter Status (Live DataTables Dropdown) -->
     <div class="d-flex align-items-center">
         <label class="me-2 small text-muted fw-bold text-nowrap"><i class="bi bi-funnel"></i> TAMPILKAN:</label>
         <select id="statusFilter" class="form-select form-select-sm custom-status-filter shadow-sm">
@@ -86,10 +78,8 @@
             <option value="Closed">Sudah Selesai (Closed)</option>
         </select>
     </div>
-
 </div>
 
-<!-- Notifikasi Sukses -->
 <?php if (session()->getFlashdata('success')) : ?>
     <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 d-flex align-items-center" role="alert">
         <i class="bi bi-check-circle-fill fs-5 me-3"></i>
@@ -101,17 +91,18 @@
 <div class="card border-0 shadow-sm" style="border-radius: 15px;">
     <div class="card-body p-4">
         <div class="table-responsive pb-2">
-            <table id="ticketTable" class="table table-borderless table-hover align-middle table-custom mb-0 w-100">
+            <table id="ticketTable" class="table table-borderless table-hover table-custom mb-0 w-100">
                 <thead>
                     <tr>
+                        <!-- Penyesuaian Lebar Kolom (Judul diperlebar jadi 25%) -->
                         <th width="5%">ID</th>
                         <th width="12%">Waktu Lapor</th>
                         <th width="15%">Pelapor</th>
-                        <th width="20%">Judul Masalah</th>
+                        <th width="25%">Judul Masalah</th>
                         <th width="8%" class="text-center">Prioritas</th>
                         <th width="10%" class="text-center">Status</th>
-                        <th width="15%">Ditangani Oleh</th>
-                        <th width="15%" class="text-center" data-orderable="false">Aksi</th>
+                        <th width="13%">Ditangani Oleh</th>
+                        <th width="12%" class="text-center" data-orderable="false">Aksi</th>
                     </tr>
                 </thead>
 
@@ -134,21 +125,21 @@
                                 </td>
 
                                 <td>
-                                    <!-- BADGE TIPE TIKET SIMRS / UMUM -->
                                     <?php if ($t['ticket_type'] === 'simrs') : ?>
-                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 mb-1" style="font-size: 0.65rem;">
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 mb-2 d-inline-block" style="font-size: 0.65rem;">
                                             <i class="bi bi-hospital me-1"></i> SIMRS
                                         </span>
                                     <?php else : ?>
-                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 mb-1" style="font-size: 0.65rem;">
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 mb-2 d-inline-block" style="font-size: 0.65rem;">
                                             <i class="bi bi-pc-display me-1"></i> IT UMUM
                                         </span>
                                     <?php endif; ?>
 
-                                    <div class="fw-bold text-dark text-truncate" style="max-width: 220px;" title="<?= esc($t['title']) ?>">
+                                    <!-- Class text-truncate dan max-width DIHAPUS, biarkan teks membungkus (wrap) alami ke bawah -->
+                                    <div class="fw-bold text-dark mb-1" style="line-height: 1.4;">
                                         <?= esc($t['title']) ?>
                                     </div>
-                                    <span class="text-muted" style="font-size: 0.8rem;"><i class="bi bi-tag"></i> <?= esc($t['category_name']) ?></span>
+                                    <span class="text-muted d-block mt-2" style="font-size: 0.8rem;"><i class="bi bi-tag"></i> <?= esc($t['category_name']) ?></span>
                                 </td>
 
                                 <td class="text-center">
@@ -165,9 +156,9 @@
                                     <?php if ($t['status'] === 'open') : ?>
                                         <span class="badge badge-custom bg-secondary text-uppercase">Open</span>
                                     <?php elseif ($t['status'] === 'in progress') : ?>
-                                        <span class="badge badge-custom bg-primary text-uppercase">In Progress</span>
+                                        <span class="badge badge-custom bg-primary text-uppercase">In Prog</span>
                                     <?php elseif ($t['status'] === 'resolved') : ?>
-                                        <span class="badge badge-custom bg-info text-dark text-uppercase">Resolved</span>
+                                        <span class="badge badge-custom bg-info text-dark text-uppercase">Resolv</span>
                                     <?php else : ?>
                                         <span class="badge badge-custom bg-success text-uppercase">Closed</span>
                                     <?php endif; ?>
@@ -176,7 +167,7 @@
                                 <td>
                                     <?php if (!empty($t['technician_name'])) : ?>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar-sm me-2 shadow-sm">
+                                            <div class="avatar-sm me-2 shadow-sm flex-shrink-0">
                                                 <?= strtoupper(substr($t['technician_name'], 0, 1)) ?>
                                             </div>
                                             <span class="fw-semibold text-dark" style="font-size: 0.9rem;"><?= esc($t['technician_name']) ?></span>
@@ -186,7 +177,7 @@
                                     <?php endif; ?>
                                 </td>
 
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     <a href="<?= base_url('tickets/detail/'.$t['id']) ?>" class="btn btn-light text-primary btn-action shadow-sm" title="Lihat Detail">
                                         <i class="bi bi-eye"></i>
                                     </a>
@@ -213,7 +204,6 @@
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
     $(document).ready(function() {
-        // Inisialisasi DataTables dan simpan ke dalam variabel 'table'
         var table = $('#ticketTable').DataTable({
             language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json' },
             order: [[1, 'desc']], 
@@ -223,10 +213,7 @@
             }
         });
 
-        // Script khusus untuk Live Filter Status
         $('#statusFilter').on('change', function() {
-            // Kolom Status berada di index ke-5 (dihitung dari 0: ID=0, Waktu=1, Pelapor=2, Judul=3, Prioritas=4, Status=5)
-            // search() akan memfilter kata kunci, lalu draw() akan merender ulang tabel secara live
             table.column(5).search(this.value).draw();
         });
     });
