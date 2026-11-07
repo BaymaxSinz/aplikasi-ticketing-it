@@ -15,7 +15,7 @@ class Dashboard extends BaseController
         $tiket_open  = $ticketModel->where('status', 'open')->countAllResults();
         $in_progress = $ticketModel->where('status', 'in progress')->countAllResults();
         $selesai     = $ticketModel->whereIn('status', ['resolved', 'closed'])->countAllResults();
-        $total_semua = $ticket_open + $in_progress + $selesai;
+        $total_semua = $tiket_open + $in_progress + $selesai;
 
         // 2. 5 TIKET TERBARU (QUICK ACCESS)
         $builder = $ticketModel->builder();
